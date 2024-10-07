@@ -82,41 +82,13 @@ def process_manager_info(team_name):
 
 def process_team_players(team_name, num_players):
     print(f"Processing {team_name} players...")
+    
     player_zodiacs = []
-    player_points = 0 # Access the global player points
+    player_points = 0  # Initialize player_points
 
-    print(f"Enter the details of the captain for {team_name}:")
-    captain_name = input(f"Enter the captain's name for {team_name}: ")
-
-    # Calculate numerology for the captain's name
-    captain_name_numerology = calculate_numerology(captain_name, letterConversions)
-
-    if captain_name_numerology in [1, 3, 4, 11, 22, 33]:
-        player_points += 1
-        print(f"{team_name} earns a point for the captain {captain_name}'s numerology ({captain_name_numerology})")
-    elif captain_name_numerology == 7:
-        player_points -= 1
-        print(f"{team_name} loses a point for the captain {captain_name}'s numerology")
-
-    # Get captain's birthdate
-    captain_birthdate = input(f"Enter the captain's birthdate (dd/mm/yyyy): ")
-    day, month, year = map(int, captain_birthdate.split('/'))
-
-    # Check if captain's day of birth is special or adds up to 1
-    if day in [1, 10, 19, 28] or calculate_numerology(captain_birthdate, letterConversions) == 1:
-        player_points += 1
-        print(f"{team_name} earns a point because the captain {captain_name} was born on a 1 day or numerology adds up to 1")
-
-    # Calculate and store the captain's zodiac sign
-    captain_zodiac = calculate_zodiac(captain_birthdate)
-    player_zodiacs.append(captain_zodiac)
-    print(f"The captain's zodiac is {captain_zodiac}.")
-
-    # Process the rest of the players
+    # Process other players
     for i in range(num_players):
-        player_name = input(f"Enter the name of the player {i+1} for {team_name}: ")
-
-        # Calculate numerology for the player's name
+        player_name = input(f"Enter the name of player {i+1} for {team_name}: ")
         player_name_numerology = calculate_numerology(player_name, letterConversions)
 
         if player_name_numerology in {1, 3, 4, 11, 22, 33}:
@@ -124,23 +96,21 @@ def process_team_players(team_name, num_players):
             print(f"Player {player_name} earns 1 point for the team based on numerology.")
         elif player_name_numerology == 7:
             player_points -= 1
-            print(f"Player {player_name} loses 1 point for the team based on numerology.")
+            print(f"Player {player_name} loses 1 point for the team based on name numerology.")
 
-        # Get player's birthdate and process it
-        player_birthdate = input(f"Enter birthdate for player {i+1} (format: dd/mm/yyyy): ")
+        player_birthdate = input(f"Enter birthdate for player {i+1} (dd/mm/yyyy): ")
         day, month, year = map(int, player_birthdate.split('/'))
+
+        # Calculate and print player's Chinese zodiac sign and energies
+        player_zodiac = get_zodiac_sign(year)
+        player_zodiacs.append(player_zodiac)
+        print(f"Player {i+1}'s Chinese zodiac is {player_zodiac}.")
 
         secondary_energy = calculate_secondary_energy(day)
         primary_energy = calculate_primary_energy(day, month, year)
 
-        player_zodiac = calculate_zodiac(player_birthdate)
-        player_zodiacs.append(player_zodiac)
-
-        print(f"Player {i+1}: Secondary Energy = {secondary_energy}, Primary Energy = {primary_energy}, Zodiac = {player_zodiac}")
-
-        # Add point if energies are 1 or 11
-        if secondary_energy in [1, 11] or primary_energy in [1, 11]:
-            player_points += 1
+        # Award points for energies
+        player_points += 1 if secondary_energy in [1, 11] or primary_energy in [1, 11] else 0
 
     return player_points, player_zodiacs
 
@@ -158,7 +128,9 @@ def calculate_zodiac_points(team_zodiac, player_zodiacs, manager_zodiac):
         "Horse": ["Rat", "Ox"], "Goat": ["Ox", "Rat"], "Monkey": ["Tiger", "Pig"],
         "Rooster": ["Cat", "Dog"], "Dog": ["Dragon", "Rooster"], "Pig": ["Snake", "Monkey"]
     }
-
+    
+    # Set current year to 2024 - Year of the Dragon
+    current_year_zodiac = "Dragon"
     points = 0
 
     # Check manager zodiac vs team zodiac
@@ -169,6 +141,12 @@ def calculate_zodiac_points(team_zodiac, player_zodiacs, manager_zodiac):
     elif manager_zodiac in zodiac_enemies.get(team_zodiac, []):
         points -= 1
 
+    # Dragon year point adjustments for manager
+    if manager_zodiac == "Dog":  # Deduct point if Dog (enemy of Dragon)
+        points -= 1
+    elif manager_zodiac in zodiac_friendships.get(current_year_zodiac, []):  # Award point if friend of Dragon
+        points += 1
+
     # Check player zodiacs vs team zodiac
     for player_zodiac in player_zodiacs:
         if player_zodiac == team_zodiac:
@@ -178,7 +156,14 @@ def calculate_zodiac_points(team_zodiac, player_zodiacs, manager_zodiac):
         elif player_zodiac in zodiac_enemies.get(team_zodiac, []):
             points -= 1
 
+        # Dragon year point adjustments for players
+        if player_zodiac == "Dog":  # Deduct point if Dog (enemy of Dragon)
+            points -= 1
+        elif player_zodiac in zodiac_friendships.get(current_year_zodiac, []):  # Award point if friend of Dragon
+            points += 1
+
     return points
+
 
 def calculate_zodiac(birthdate):
     day, month, year = map(int, birthdate.split('/'))
@@ -207,6 +192,8 @@ def calculate_zodiac(birthdate):
         return "Sagittarius"
     else:
         return "Capricorn"
+
+
 
 
 home_team_name = input("Enter home team first name: ") + " " + input("Enter home team second name: ")
