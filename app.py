@@ -1,4 +1,5 @@
 from functools import reduce
+from datetime import datetime
 
 # Dictionary for letter to number conversion (Numerology values)
 MANAGER_LUCKY_NUMBERS = {1, 3, 4, 7, 11, 13, 22, 33}
@@ -10,19 +11,86 @@ letterConversions = {
 }
 
 zodiac_signs = {
-    0: "Monkey",
-    1: "Rooster",
-    2: "Dog",
-    3: "Pig",
-    4: "Rat",
-    5: "Ox",
-    6: "Tiger",
-    7: "Cat",  
-    8: "Dragon",
-    9: "Snake",
-    10: "Horse",
-    11: "Goat",  
+    0: "Monkey", 1: "Rooster", 2: "Dog", 3: "Pig", 4: "Rat", 5: "Ox",
+    6: "Tiger", 7: "Cat", 8: "Dragon", 9: "Snake", 10: "Horse", 11: "Goat",
 }
+
+zodiac_relations = {
+    "Rat": {"friends": ["Dragon", "Monkey"], "enemies": ["Horse"]},
+    "Ox": {"friends": ["Snake", "Rooster"], "enemies": ["Goat"]},
+    "Tiger": {"friends": ["Horse", "Dog"], "enemies": ["Monkey"]},
+    "Cat": {"friends": ["Goat", "Pig"], "enemies": ["Rooster"]},
+    "Dragon": {"friends": ["Rat", "Monkey"], "enemies": ["Dog"]},
+    "Snake": {"friends": ["Ox", "Rooster"], "enemies": ["Pig"]},
+    "Horse": {"friends": ["Tiger", "Dog"], "enemies": ["Rat"]},
+    "Goat": {"friends": ["Cat", "Pig"], "enemies": ["Ox"]},
+    "Monkey": {"friends": ["Rat", "Dragon"], "enemies": ["Tiger"]},
+    "Rooster": {"friends": ["Ox", "Snake"], "enemies": ["Cat"]},
+    "Dog": {"friends": ["Tiger", "Horse"], "enemies": ["Dragon"]},
+    "Pig": {"friends": ["Goat", "Cat"], "enemies": ["Snake"]}
+}
+
+
+# Lunar New Year start dates from 1860 to 2024
+lunar_new_year_dates = {
+    1860: "01/20", 1861: "02/08", 1862: "01/28", 1863: "02/15",
+    1864: "02/03", 1865: "01/23", 1866: "02/10", 1867: "01/30",
+    1868: "02/17", 1869: "02/05", 1870: "01/25", 1871: "02/12",
+    1872: "02/01", 1873: "01/22", 1874: "02/10", 1875: "01/30",
+    1876: "02/19", 1877: "02/07", 1878: "01/28", 1879: "02/15",
+    1880: "02/05", 1881: "01/24", 1882: "02/13", 1883: "02/02",
+    1884: "01/23", 1885: "02/10", 1886: "01/30", 1887: "01/20",
+    1888: "02/08", 1889: "01/29", 1890: "02/16", 1891: "02/06",
+    1892: "01/26", 1893: "02/14", 1894: "02/02", 1895: "01/22",
+    1896: "02/10", 1897: "01/30", 1898: "02/17", 1899: "02/07",
+    1900: "01/27", 1901: "02/15", 1902: "02/08", 1903: "01/29",
+    1904: "02/16", 1905: "02/04", 1906: "01/25", 1907: "02/13",
+    1908: "02/02", 1909: "01/22", 1910: "02/10", 1911: "01/30",
+    1912: "02/18", 1913: "02/06", 1914: "01/26", 1915: "02/14",
+    1916: "02/03", 1917: "01/23", 1918: "02/11", 1919: "02/01",
+    1920: "02/20", 1921: "02/08", 1922: "01/28", 1923: "02/16",
+    1924: "02/05", 1925: "01/24", 1926: "02/13", 1927: "02/02",
+    1928: "01/23", 1929: "02/10", 1930: "01/30", 1931: "02/17",
+    1932: "02/06", 1933: "01/26", 1934: "02/14", 1935: "02/04",
+    1936: "01/24", 1937: "02/11", 1938: "01/31", 1939: "02/19",
+    1940: "02/08", 1941: "01/27", 1942: "02/15", 1943: "02/05",
+    1944: "01/25", 1945: "02/13", 1946: "02/02", 1947: "01/22",
+    1948: "02/10", 1949: "01/29", 1950: "02/17", 1951: "02/06",
+    1952: "01/27", 1953: "02/14", 1954: "02/03", 1955: "01/24",
+    1956: "02/12", 1957: "01/31", 1958: "02/18", 1959: "02/08",
+    1960: "01/28", 1961: "02/15", 1962: "02/05", 1963: "01/25",
+    1964: "02/13", 1965: "02/02", 1966: "01/21", 1967: "02/09",
+    1968: "01/30", 1969: "02/17", 1970: "02/06", 1971: "01/27",
+    1972: "02/15", 1973: "02/03", 1974: "01/23", 1975: "02/11",
+    1976: "01/31", 1977: "02/18", 1978: "02/07", 1979: "01/28",
+    1980: "02/16", 1981: "02/05", 1982: "01/25", 1983: "02/13",
+    1984: "02/02", 1985: "02/20", 1986: "02/09", 1987: "01/29",
+    1988: "02/17", 1989: "02/06", 1990: "01/27", 1991: "02/15",
+    1992: "02/04", 1993: "01/23", 1994: "02/10", 1995: "01/31",
+    1996: "02/19", 1997: "02/07", 1998: "01/28", 1999: "02/16",
+    2000: "02/05", 2001: "01/24", 2002: "02/12", 2003: "02/01",
+    2004: "01/22", 2005: "02/09", 2006: "01/29", 2007: "02/18",
+    2008: "02/07", 2009: "01/26", 2010: "02/14", 2011: "02/03",
+    2012: "01/23", 2013: "02/10", 2014: "01/31", 2015: "02/19",
+    2016: "02/08", 2017: "01/28", 2018: "02/16", 2019: "02/05",
+    2020: "01/25", 2021: "02/12", 2022: "02/01", 2023: "01/22",
+    2024: "02/10"
+}
+
+def evaluate_zodiac_points(zodiac, team_zodiac):
+    points = 0
+    
+    # Check if the manager's or player's zodiac is the same as the team's
+    if zodiac == team_zodiac:
+        points += 2
+    elif zodiac in zodiac_relations[team_zodiac]["friends"]:
+        points += 1
+    elif zodiac in zodiac_relations[team_zodiac]["enemies"]:
+        points -= 1
+
+    return points
+
+
 
 def reduce_to_single_digit(num):
     while num > 9 and num not in {11, 22, 33}:
@@ -43,16 +111,26 @@ def calculate_life_path(day, month, year):
 def check_manager_bonus(day, life_path):
     return day in MANAGER_LUCKY_NUMBERS or life_path in MANAGER_LUCKY_NUMBERS
 
-def get_zodiac_sign(year):
-    year_mod = year % 12
-    return zodiac_signs.get(year_mod, "Unknown")
+def get_zodiac_sign(day, month, year):
+    # Determine the Lunar New Year date for the given year
+    lunar_date_str = lunar_new_year_dates.get(year)
+    if not lunar_date_str:
+        raise ValueError("Year not available in Lunar New Year data.")
+    lunar_date = datetime.strptime(f"{year}/{lunar_date_str}", "%Y/%m/%d")
+    birth_date = datetime(year, month, day)
+    
+    # Adjust year if birth date is before the Lunar New Year
+    if birth_date < lunar_date:
+        year -= 1
+    return zodiac_signs[year % 12]
 
 def calculate_secondary_energy(day):
     return reduce_to_single_digit(day)
 
 def calculate_primary_energy(day, month, year):
     total = sum(map(int, str(day))) + sum(map(int, str(month))) + sum(map(int, str(year)))
-  
+    return reduce_to_single_digit(total)
+
 def process_manager_info(team_name):
     first_name = input(f"Enter the manager's first name for {team_name}: ")
     last_name = input(f"Enter the manager's last name for {team_name}: ")
@@ -75,7 +153,7 @@ def process_manager_info(team_name):
     birthdate_points = 1 if check_manager_bonus(day, life_path) else 0
 
     # Manager's zodiac sign
-    manager_zodiac = get_zodiac_sign(year)
+    manager_zodiac = get_zodiac_sign(day, month, year)
     print(f"{team_name} Manager Zodiac: {manager_zodiac}")
 
     return name_points, birthdate_points, manager_zodiac
@@ -84,9 +162,8 @@ def process_team_players(team_name, num_players):
     print(f"Processing {team_name} players...")
     
     player_zodiacs = []
-    player_points = 0  # Initialize player_points
+    player_points = 0
 
-    # Process other players
     for i in range(num_players):
         player_name = input(f"Enter the name of player {i+1} for {team_name}: ")
         player_name_numerology = calculate_numerology(player_name, letterConversions)
@@ -101,146 +178,63 @@ def process_team_players(team_name, num_players):
         player_birthdate = input(f"Enter birthdate for player {i+1} (dd/mm/yyyy): ")
         day, month, year = map(int, player_birthdate.split('/'))
 
-        # Calculate and print player's Chinese zodiac sign and energies
-        player_zodiac = get_zodiac_sign(year)
+        player_zodiac = get_zodiac_sign(day, month, year)
         player_zodiacs.append(player_zodiac)
         print(f"Player {i+1}'s Chinese zodiac is {player_zodiac}.")
 
         secondary_energy = calculate_secondary_energy(day)
         primary_energy = calculate_primary_energy(day, month, year)
 
-        # Award points for energies
         player_points += 1 if secondary_energy in [1, 11] or primary_energy in [1, 11] else 0
 
     return player_points, player_zodiacs
 
+def main():
+    home_team_name = input("Enter the name of the first team: ")
+    away_team_name = input("Enter the name of the second team: ")
 
-def calculate_zodiac_points(team_zodiac, player_zodiacs, manager_zodiac):
-    zodiac_friendships = {
-        "Rat": ["Dragon", "Monkey"], "Ox": ["Snake", "Rooster"], "Tiger": ["Horse", "Dog"],
-        "Cat": ["Goat", "Pig"], "Dragon": ["Rat", "Monkey"], "Snake": ["Rooster", "Ox"],
-        "Horse": ["Tiger", "Dog"], "Goat": ["Cat", "Pig"], "Monkey": ["Dragon", "Rat"],
-        "Rooster": ["Snake", "Ox"], "Dog": ["Tiger", "Horse"], "Pig": ["Cat", "Goat"]
-    }
-    zodiac_enemies = {
-        "Rat": ["Horse", "Goat"], "Ox": ["Goat", "Horse"], "Tiger": ["Monkey", "Snake"],
-        "Cat": ["Rooster", "Dragon"], "Dragon": ["Cat", "Dog"], "Snake": ["Pig", "Tiger"],
-        "Horse": ["Rat", "Ox"], "Goat": ["Ox", "Rat"], "Monkey": ["Tiger", "Pig"],
-        "Rooster": ["Cat", "Dog"], "Dog": ["Dragon", "Rooster"], "Pig": ["Snake", "Monkey"]
-    }
-    
-    # Set current year to 2024 - Year of the Dragon
-    current_year_zodiac = "Dragon"
-    points = 0
+    # Prompt for the full founding date of each team
+    home_team_founding_date = input("Enter home team's founding date (dd/mm/yyyy): ")
+    day, month, year = map(int, home_team_founding_date.split('/'))
+    home_team_zodiac = get_zodiac_sign(day, month, year)
+    home_team_numerology = calculate_numerology(home_team_name, letterConversions)
 
-    # Check manager zodiac vs team zodiac
-    if manager_zodiac == team_zodiac:
-        points += 2
-    elif manager_zodiac in zodiac_friendships.get(team_zodiac, []):
-        points += 1
-    elif manager_zodiac in zodiac_enemies.get(team_zodiac, []):
-        points -= 1
+    away_team_founding_date = input("Enter away team's founding date (dd/mm/yyyy): ")
+    day, month, year = map(int, away_team_founding_date.split('/'))
+    away_team_zodiac = get_zodiac_sign(day, month, year)
+    away_team_numerology = calculate_numerology(away_team_name, letterConversions)
 
-    # Dragon year point adjustments for manager
-    if manager_zodiac == "Dog":  # Deduct point if Dog (enemy of Dragon)
-        points -= 1
-    elif manager_zodiac in zodiac_friendships.get(current_year_zodiac, []):  # Award point if friend of Dragon
-        points += 1
+    # Process manager information for each team
+    home_manager_points, home_manager_birthdate_points, home_manager_zodiac = process_manager_info(home_team_name)
+    away_manager_points, away_manager_birthdate_points, away_manager_zodiac = process_manager_info(away_team_name)
 
-    # Check player zodiacs vs team zodiac
-    for player_zodiac in player_zodiacs:
-        if player_zodiac == team_zodiac:
-            points += 2
-        elif player_zodiac in zodiac_friendships.get(team_zodiac, []):
-            points += 1
-        elif player_zodiac in zodiac_enemies.get(team_zodiac, []):
-            points -= 1
+    # Process players information for each team
+    num_players_home = int(input(f"Enter the number of players for {home_team_name}: "))
+    home_player_points, home_player_zodiacs = process_team_players(home_team_name, num_players_home)
 
-        # Dragon year point adjustments for players
-        if player_zodiac == "Dog":  # Deduct point if Dog (enemy of Dragon)
-            points -= 1
-        elif player_zodiac in zodiac_friendships.get(current_year_zodiac, []):  # Award point if friend of Dragon
-            points += 1
+    num_players_away = int(input(f"Enter the number of players for {away_team_name}: "))
+    away_player_points, away_player_zodiacs = process_team_players(away_team_name, num_players_away)
 
-    return points
+    home_total_score = (home_manager_points + home_manager_birthdate_points + home_player_points +
+                    evaluate_zodiac_points(home_manager_zodiac, home_team_zodiac) +
+                    sum(evaluate_zodiac_points(player_zodiac, home_team_zodiac) for player_zodiac in home_player_zodiacs))
 
+    away_total_score = (away_manager_points + away_manager_birthdate_points + away_player_points +
+                    evaluate_zodiac_points(away_manager_zodiac, away_team_zodiac) +
+                    sum(evaluate_zodiac_points(player_zodiac, away_team_zodiac) for player_zodiac in away_player_zodiacs))
 
-def calculate_zodiac(birthdate):
-    day, month, year = map(int, birthdate.split('/'))
-    
-    if (month == 1 and day >= 20) or (month == 2 and day <= 18):
-        return "Aquarius"
-    elif (month == 2 and day >= 19) or (month == 3 and day <= 20):
-        return "Pisces"
-    elif (month == 3 and day >= 21) or (month == 4 and day <= 19):
-        return "Aries"
-    elif (month == 4 and day >= 20) or (month == 5 and day <= 20):
-        return "Taurus"
-    elif (month == 5 and day >= 21) or (month == 6 and day <= 20):
-        return "Gemini"
-    elif (month == 6 and day >= 21) or (month == 7 and day <= 22):
-        return "Cancer"
-    elif (month == 7 and day >= 23) or (month == 8 and day <= 22):
-        return "Leo"
-    elif (month == 8 and day >= 23) or (month == 9 and day <= 22):
-        return "Virgo"
-    elif (month == 9 and day >= 23) or (month == 10 and day <= 22):
-        return "Libra"
-    elif (month == 10 and day >= 23) or (month == 11 and day <= 21):
-        return "Scorpio"
-    elif (month == 11 and day >= 22) or (month == 12 and day <= 21):
-        return "Sagittarius"
+    # Output results
+    print(f"{home_team_name} Total Score: {home_total_score}")
+    print(f"{away_team_name} Total Score: {away_total_score}")
+
+    if home_total_score > away_total_score:
+        print(f"{home_team_name} is more likely to win!")
+    elif home_total_score < away_total_score:
+        print(f"{away_team_name} is more likely to win!")
     else:
-        return "Capricorn"
+        print("It's a tie!")
 
+# Run the main function
+if __name__ == "__main__":
+    main()
 
-
-
-home_team_name = input("Enter home team first name: ") + " " + input("Enter home team second name: ")
-away_team_name = input("Enter away team first name: ") + " " + input("Enter away team second name: ")
-
-home_team_founding_year = int(input("Enter home team's founding year: "))
-away_team_founding_year = int(input("Enter away team's founding year: "))
-
-# Calculate numerology for team names
-home_team_numerology = calculate_numerology(home_team_name, letterConversions)
-away_team_numerology = calculate_numerology(away_team_name, letterConversions)
-
-home_team_zodiac = get_zodiac_sign(home_team_founding_year)
-away_team_zodiac = get_zodiac_sign(away_team_founding_year)
-
-# Manager info
-home_manager_name_points, home_manager_birthdate_points, home_manager_zodiac = process_manager_info("Home Team")
-away_manager_name_points, away_manager_birthdate_points, away_manager_zodiac = process_manager_info("Away Team")
-
-# Player info
-home_team_players = int(input("Enter the number of players in the home team: "))
-away_team_players = int(input("Enter the number of players in the away team: "))
-
-home_player_points, home_player_zodiacs = process_team_players("Home Team", home_team_players)
-away_player_points, away_player_zodiacs = process_team_players("Away Team", away_team_players)
-
-# Zodiac points
-home_team_zodiac_points = calculate_zodiac_points(home_team_zodiac, home_player_zodiacs, home_manager_zodiac)
-away_team_zodiac_points = calculate_zodiac_points(away_team_zodiac, away_player_zodiacs, away_manager_zodiac)
-
-# Summing points for each team
-home_team_total_points = (
-    home_manager_name_points + home_manager_birthdate_points + home_player_points
-    + home_team_numerology + home_team_zodiac_points
-)
-away_team_total_points = (
-    away_manager_name_points + away_manager_birthdate_points + away_player_points
-    + away_team_numerology + away_team_zodiac_points
-)
-
-# Output final points and declare winner
-print(f"Home Team ({home_team_name}) Total Points: {home_team_total_points}")
-print(f"Away Team ({away_team_name}) Total Points: {away_team_total_points}")
-
-if home_team_total_points > away_team_total_points:
-    print("Home Team is likely to win!")
-elif away_team_total_points > home_team_total_points:
-    print("Away Team is likely to win!")
-else:
-    print("The match is likely to be a draw!")
