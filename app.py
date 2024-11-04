@@ -2,7 +2,10 @@ from functools import reduce
 from datetime import datetime
 
 # Dictionary for letter to number conversion (Numerology values)
+manager_lucky_numbers = {1, 3, 4, 7, 11, 13, 22, 33}
 MANAGER_LUCKY_NUMBERS = {1, 3, 4, 7, 11, 13, 22, 33}
+
+enemy_numerology_pairs = [(1, 9), (3, 4), (11, 9)]
 
 letterConversions = {
     "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9,
@@ -77,20 +80,64 @@ lunar_new_year_dates = {
     2024: "02/10"
 }
 
-def evaluate_zodiac_points(zodiac, team_zodiac):
+# Existing zodiac_relations for reference
+zodiac_relations = {
+    "Rat": {"friends": ["Dragon", "Monkey"], "enemies": ["Horse"]},
+    "Ox": {"friends": ["Snake", "Rooster"], "enemies": ["Goat"]},
+    "Tiger": {"friends": ["Horse", "Dog"], "enemies": ["Monkey"]},
+    "Cat": {"friends": ["Pig", "Goat"], "enemies": ["Rooster"]},
+    "Dragon": {"friends": ["Rat", "Monkey"], "enemies": ["Dog"]},
+    "Snake": {"friends": ["Ox", "Rooster"], "enemies": ["Pig"]},
+    "Horse": {"friends": ["Tiger", "Dog"], "enemies": ["Rat"]},
+    "Goat": {"friends": ["Rabbit", "Pig"], "enemies": ["Ox"]},
+    "Monkey": {"friends": ["Rat", "Dragon"], "enemies": ["Tiger"]},
+    "Rooster": {"friends": ["Ox", "Snake"], "enemies": ["Cat"]},
+    "Dog": {"friends": ["Tiger", "Horse"], "enemies": ["Dragon"]},
+    "Pig": {"friends": ["Cat", "Goat"], "enemies": ["Snake"]}
+}
+
+def evaluate_manager_zodiac_points(manager_zodiac, team_zodiac, manager_birth_day, manager_life_path, team_life_path):
     points = 0
-    
-    # Check if the manager's or player's zodiac is the same as the team's
-    if zodiac == team_zodiac:
-        points += 2
-    elif zodiac in zodiac_relations[team_zodiac]["friends"]:
+
+    # Check if manager's zodiac is a friend, enemy, or match of the team’s zodiac
+    if manager_zodiac == team_zodiac:
+        points += 2  # Same zodiac match
+    elif manager_zodiac in zodiac_relations.get(team_zodiac, {}).get("friends", []):
+        points += 1  # Manager's zodiac is a friend
+    elif manager_zodiac in zodiac_relations.get(team_zodiac, {}).get("enemies", []):
+        points -= 1  # Manager's zodiac is an enemy
+
+    # Award a point if the manager's birth day or life path is in lucky numbers
+    if manager_birth_day in MANAGER_LUCKY_NUMBERS or manager_life_path in MANAGER_LUCKY_NUMBERS:
         points += 1
-    elif zodiac in zodiac_relations[team_zodiac]["enemies"]:
+
+    # Deduct a point if manager’s life path is an enemy to team’s life path
+    enemy_numerology_pairs = [(3, 4), (1, 9), (11, 9)]
+    if (manager_life_path, team_life_path) in enemy_numerology_pairs or \
+       (team_life_path, manager_life_path) in enemy_numerology_pairs:
         points -= 1
 
     return points
 
 
+# Update zodiac evaluation specifically for players
+def evaluate_player_zodiac_points(player_zodiac, team_zodiac, player_life_path, team_life_path):
+    points = 0
+
+    # Check if player's zodiac is a friend, enemy, or match of the team’s zodiac
+    if player_zodiac == team_zodiac:
+        points += 2  # Same zodiac match
+    elif player_zodiac in zodiac_relations.get(team_zodiac, {}).get("friends", []):
+        points += 1  # Player's zodiac is a friend
+    elif player_zodiac in zodiac_relations.get(team_zodiac, {}).get("enemies", []):
+        points -= 1  # Player's zodiac is an enemy
+
+    # Deduct a point if player's life path is an enemy to team's life path
+    if (player_life_path, team_life_path) in enemy_numerology_pairs or \
+       (team_life_path, player_life_path) in enemy_numerology_pairs:
+        points -= 1
+
+    return points
 
 def reduce_to_single_digit(num):
     while num > 9 and num not in {11, 22, 33}:
@@ -131,7 +178,8 @@ def calculate_primary_energy(day, month, year):
     total = sum(map(int, str(day))) + sum(map(int, str(month))) + sum(map(int, str(year)))
     return reduce_to_single_digit(total)
 
-def process_manager_info(team_name):
+# Process manager information
+def process_manager_info(team_name, team_zodiac, team_founding_date):
     first_name = input(f"Enter the manager's first name for {team_name}: ")
     last_name = input(f"Enter the manager's last name for {team_name}: ")
 
@@ -148,7 +196,6 @@ def process_manager_info(team_name):
     # Manager's birthdate processing
     print(f"Enter the manager's birthdate for {team_name} (format: day/month/year): ")
     day, month, year = map(int, input().split('/'))
-
     life_path = calculate_life_path(day, month, year)
     birthdate_points = 1 if check_manager_bonus(day, life_path) else 0
 
@@ -156,74 +203,66 @@ def process_manager_info(team_name):
     manager_zodiac = get_zodiac_sign(day, month, year)
     print(f"{team_name} Manager Zodiac: {manager_zodiac}")
 
-    return name_points, birthdate_points, manager_zodiac
+    # Calculate team life path based on founding date
+    founding_day, founding_month, founding_year = map(int, team_founding_date.split('/'))
+    team_life_path = calculate_life_path(founding_day, founding_month, founding_year)
 
-def process_team_players(team_name, num_players):
-    print(f"Processing {team_name} players...")
-    
-    player_zodiacs = []
-    player_points = 0
+    # Evaluate compatibility with team zodiac
+    compatibility_points = evaluate_manager_zodiac_points(manager_zodiac, team_zodiac, day, life_path, team_life_path)
 
-    for i in range(num_players):
-        player_name = input(f"Enter the name of player {i+1} for {team_name}: ")
-        player_name_numerology = calculate_numerology(player_name, letterConversions)
+    # Return points and manager's life path for additional evaluations
+    return name_points, birthdate_points + compatibility_points, manager_zodiac, life_path
 
-        if player_name_numerology in {1, 3, 4, 11, 22, 33}:
-            player_points += 1
-            print(f"Player {player_name} earns 1 point for the team based on numerology.")
-        elif player_name_numerology == 7:
-            player_points -= 1
-            print(f"Player {player_name} loses 1 point for the team based on name numerology.")
+def process_team_players(team_name, num_players, team_zodiac, team_founding_date, team_life_path):
+    total_player_points = 0
+    player_life_paths = []
 
-        player_birthdate = input(f"Enter birthdate for player {i+1} (dd/mm/yyyy): ")
+    for i in range(1, num_players + 1):
+        player_birthdate = input(f"Enter the player's birthdate for player {i} of {team_name} (format: day/month/year): ")
         day, month, year = map(int, player_birthdate.split('/'))
-
         player_zodiac = get_zodiac_sign(day, month, year)
-        player_zodiacs.append(player_zodiac)
-        print(f"Player {i+1}'s Chinese zodiac is {player_zodiac}.")
+        player_life_path = calculate_life_path(day, month, year)
 
-        secondary_energy = calculate_secondary_energy(day)
-        primary_energy = calculate_primary_energy(day, month, year)
+        # Evaluate points based on zodiac compatibility
+        compatibility_points = evaluate_player_zodiac_points(player_zodiac, team_zodiac, player_life_path, team_life_path)
+        total_player_points += compatibility_points
+        player_life_paths.append(player_life_path)
 
-        player_points += 1 if secondary_energy in [1, 11] or primary_energy in [1, 11] else 0
+        print(f"{team_name} Player {i} Zodiac: {player_zodiac}")
 
-    return player_points, player_zodiacs
+    return total_player_points, player_life_paths
 
 def main():
     home_team_name = input("Enter the name of the first team: ")
     away_team_name = input("Enter the name of the second team: ")
 
-    # Prompt for the full founding date of each team
+    # Get founding date and calculate life path for each team
     home_team_founding_date = input("Enter home team's founding date (dd/mm/yyyy): ")
     day, month, year = map(int, home_team_founding_date.split('/'))
     home_team_zodiac = get_zodiac_sign(day, month, year)
-    home_team_numerology = calculate_numerology(home_team_name, letterConversions)
+    home_team_life_path = calculate_life_path(day, month, year)
 
     away_team_founding_date = input("Enter away team's founding date (dd/mm/yyyy): ")
     day, month, year = map(int, away_team_founding_date.split('/'))
     away_team_zodiac = get_zodiac_sign(day, month, year)
-    away_team_numerology = calculate_numerology(away_team_name, letterConversions)
+    away_team_life_path = calculate_life_path(day, month, year)
 
-    # Process manager information for each team
-    home_manager_points, home_manager_birthdate_points, home_manager_zodiac = process_manager_info(home_team_name)
-    away_manager_points, away_manager_birthdate_points, away_manager_zodiac = process_manager_info(away_team_name)
+    # Process manager info and retrieve manager's life path for both teams
+    home_manager_points, home_manager_birthdate_points, home_manager_zodiac, home_manager_life_path = process_manager_info(home_team_name, home_team_zodiac, home_team_founding_date)
+    away_manager_points, away_manager_birthdate_points, away_manager_zodiac, away_manager_life_path = process_manager_info(away_team_name, away_team_zodiac, away_team_founding_date)
 
-    # Process players information for each team
+    # Process players for both teams and retrieve players' life paths
     num_players_home = int(input(f"Enter the number of players for {home_team_name}: "))
-    home_player_points, home_player_zodiacs = process_team_players(home_team_name, num_players_home)
+    home_player_points, _ = process_team_players(home_team_name, num_players_home, home_team_zodiac, home_team_founding_date, home_team_life_path)
 
     num_players_away = int(input(f"Enter the number of players for {away_team_name}: "))
-    away_player_points, away_player_zodiacs = process_team_players(away_team_name, num_players_away)
+    away_player_points, _ = process_team_players(away_team_name, num_players_away, away_team_zodiac, away_team_founding_date, away_team_life_path)
 
-    home_total_score = (home_manager_points + home_manager_birthdate_points + home_player_points +
-                    evaluate_zodiac_points(home_manager_zodiac, home_team_zodiac) +
-                    sum(evaluate_zodiac_points(player_zodiac, home_team_zodiac) for player_zodiac in home_player_zodiacs))
+    # Total scores for each team
+    home_total_score = home_manager_points + home_manager_birthdate_points + home_player_points
+    away_total_score = away_manager_points + away_manager_birthdate_points + away_player_points
 
-    away_total_score = (away_manager_points + away_manager_birthdate_points + away_player_points +
-                    evaluate_zodiac_points(away_manager_zodiac, away_team_zodiac) +
-                    sum(evaluate_zodiac_points(player_zodiac, away_team_zodiac) for player_zodiac in away_player_zodiacs))
-
-    # Output results
+    # Output the total scores and declare which team is more likely to win
     print(f"{home_team_name} Total Score: {home_total_score}")
     print(f"{away_team_name} Total Score: {away_total_score}")
 
@@ -237,4 +276,3 @@ def main():
 # Run the main function
 if __name__ == "__main__":
     main()
-
