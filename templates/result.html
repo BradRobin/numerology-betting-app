@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .result {
+            background-color: #fff;
+            padding: 20px;
+            margin: 0 auto;
+            width: 60%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .score {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .winner {
+            font-size: 1.2em;
+            color: green;
+        }
+        .tie {
+            font-size: 1.2em;
+            color: orange;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Evaluation Results</h1>
+    <div class="result">
+        <h2>{{ home_team_name }} vs {{ away_team_name }}</h2>
+        <div class="score">
+            <p>{{ home_team_name }} Total Score: {{ home_total_score }}</p>
+            <p>{{ away_team_name }} Total Score: {{ away_total_score }}</p>
+        </div>
+
+        {% if winner == "It's a tie!" %}
+        <div class="tie">
+            <p>It's a tie!</p>
+        </div>
+        {% else %}
+        <div class="winner">
+            <p>{{ winner }} is more likely to win!</p>
+        </div>
+        {% endif %}
+        
+        <a href="/">Go Back</a>
+    </div>
+</body>
+</html>

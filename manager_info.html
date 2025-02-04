@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Information</title>
+</head>
+<body>
+    <h1>Enter Manager Details</h1>
+    <form action="/process_manager" method="post">
+        <label for="team_name">Team Name:</label>
+        <input type="text" id="team_name" name="team_name" required><br><br>
+        
+        <label for="first_name">Manager's First Name:</label>
+        <input type="text" id="first_name" name="first_name" required><br><br>
+        
+        <label for="last_name">Manager's Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required><br><br>
+        
+        <label for="birth_date">Manager's Birthdate (dd/mm/yyyy):</label>
+        <input type="text" id="birth_date" name="birth_date" required><br><br>
+        
+        <label for="team_zodiac">Team Zodiac:</label>
+        <input type="text" id="team_zodiac" name="team_zodiac" required><br><br>
+
+        <label for="today_life_path">Today's Life Path:</label>
+        <input type="number" id="today_life_path" name="today_life_path" required><br><br>
+
+        <label for="today_day">Today's Day:</label>
+        <input type="number" id="today_day" name="today_day" required><br><br>
+        
+        <label for="today_zodiac_year">Today's Zodiac Year:</label>
+        <input type="text" id="today_zodiac_year" name="today_zodiac_year" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

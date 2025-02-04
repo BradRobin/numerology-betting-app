@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Players Information</title>
+</head>
+<body>
+    <h1>Enter Player Details</h1>
+    <form action="/process_players" method="post">
+        <label for="team_name">Team Name:</label>
+        <input type="text" id="team_name" name="team_name" required><br><br>
+        
+        <label for="num_players">Number of Players:</label>
+        <input type="number" id="num_players" name="num_players" required><br><br>
+
+        <h2>Player 1</h2>
+        <label for="player_name_1">Player Name:</label>
+        <input type="text" id="player_name_1" name="player_name_1" required><br><br>
+        
+        <label for="player_birthdate_1">Player Birthdate (dd/mm/yyyy):</label>
+        <input type="text" id="player_birthdate_1" name="player_birthdate_1" required><br><br>
+
+        <!-- Repeat this block for more players -->
+        
+        <label for="team_zodiac">Team Zodiac:</label>
+        <input type="text" id="team_zodiac" name="team_zodiac" required><br><br>
+
+        <label for="today_life_path">Today's Life Path:</label>
+        <input type="number" id="today_life_path" name="today_life_path" required><br><br>
+
+        <label for="today_day">Today's Day:</label>
+        <input type="number" id="today_day" name="today_day" required><br><br>
+        
+        <label for="today_zodiac_year">Today's Zodiac Year:</label>
+        <input type="text" id="today_zodiac_year" name="today_zodiac_year" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

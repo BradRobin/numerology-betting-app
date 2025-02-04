@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerology and Zodiac Evaluation</title>
+    <script>
+        function generatePlayerInputs(team) {
+            var numPlayers = document.getElementById(team + '-num-players').value;
+            var playerDiv = document.getElementById(team + '-players');
+            playerDiv.innerHTML = '';  // Clear previous inputs
+
+            for (var i = 1; i <= numPlayers; i++) {
+                var playerForm = document.createElement('div');
+                playerForm.classList.add('player-form');
+                playerForm.innerHTML = `
+                    <label for="${team}-player-name-${i}">Player ${i} Name:</label>
+                    <input type="text" name="${team}_player_name_${i}" required>
+                    <br>
+                    <label for="${team}-player-birthdate-${i}">Player ${i} Birthdate (dd/mm/yyyy):</label>
+                    <input type="text" name="${team}_player_birthdate_${i}" required>
+                    <br><br>
+                `;
+                playerDiv.appendChild(playerForm);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Enter today's details and team information:</h1>
+    <form action="/" method="POST">
+        <label for="today_date">Enter today's date (dd/mm/yyyy):</label>
+        <input type="text" id="today_date" name="today_date" required>
+        <br>
+
+        <label for="today_zodiac_year">Enter today's zodiac year:</label>
+        <input type="text" id="today_zodiac_year" name="today_zodiac_year" required>
+        <br>
+
+        <label for="home_team_name">Home Team Name:</label>
+        <input type="text" id="home_team_name" name="home_team_name" required>
+        <br>
+
+        <label for="away_team_name">Away Team Name:</label>
+        <input type="text" id="away_team_name" name="away_team_name" required>
+        <br>
+
+        <label for="home_team_founding_date">Home Team Founding Date (dd/mm/yyyy):</label>
+        <input type="text" id="home_team_founding_date" name="home_team_founding_date" required>
+        <br>
+
+        <label for="away_team_founding_date">Away Team Founding Date (dd/mm/yyyy):</label>
+        <input type="text" id="away_team_founding_date" name="away_team_founding_date" required>
+        <br>
+
+        <!-- Number of Players -->
+        <label for="home-num-players">Number of Home Team Players:</label>
+        <input type="number" id="home-num-players" name="num_players_home" required oninput="generatePlayerInputs('home')">
+        <br>
+
+        <label for="away-num-players">Number of Away Team Players:</label>
+        <input type="number" id="away-num-players" name="num_players_away" required oninput="generatePlayerInputs('away')">
+        <br>
+
+        <!-- Dynamically generated player inputs for home team -->
+        <h2>Home Team Players</h2>
+        <div id="home-players"></div>
+
+        <h2>Away Team Players</h2>
+        <div id="away-players"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
